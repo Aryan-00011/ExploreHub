@@ -1,0 +1,290 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <h2 class="mb-4 text-center fw-bold">
+                <%= listing.title %>
+            </h2>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+                <img
+                    src="<%= listing.image?.url || 'https://images.unsplash.com/photo-1566073771259-6a8506099945' %>"
+                    class="card-img-top show-img"
+                    alt="listing image"
+                    style="height:450px; object-fit:cover;"
+                >
+
+                <div class="card-body p-4">
+
+                    <p class="card-text text-muted fs-5">
+                        <%= listing.description %>
+                    </p>
+
+                    <hr>
+
+                    <p class="mb-2">
+                        <i class="fa-solid fa-location-dot me-2"></i>
+                        <%= listing.location %>
+                    </p>
+
+                    <p class="mb-2">
+                        <i class="fa-solid fa-map me-2"></i>
+                        <%= listing.state %>
+                    </p>
+
+                    <p class="mb-4">
+                        <i class="fa-solid fa-earth-asia me-2"></i>
+                        <%= listing.country %>
+                    </p>
+
+                    <% if(currUser){ %>
+                    <div class="d-flex gap-3">
+                        <a
+                            href="/listings/<%= listing._id %>/edit"
+                            class="btn btn-dark"
+                        >
+                            Edit
+                        </a>
+
+                        <form
+                            method="POST"
+                            action="/listings/<%= listing._id %>?_method=DELETE"
+                        >
+                            <button class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                    <% } %>
+
+                </div>
+            </div>
+
+            <hr class="my-5">
+
+            <h3 class="mb-3">Leave a Review</h3>
+
+            <% if(currUser){ %>
+
+            <form method="POST" action="/listings/<%= listing._id %>/reviews">
+
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value="3"
+                        name="review[rating]"
+                        class="form-range"
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Comment</label>
+                    <textarea
+                        class="form-control"
+                        name="review[comment]"
+                        rows="4"
+                        required
+                    ></textarea>
+                </div>
+
+                <button class="btn btn-dark">
+                    Submit Review
+                </button>
+
+            </form>
+
+            <% } else { %>
+
+            <a href="/login" class="btn btn-outline-dark">
+                Login to Add Review
+            </a>
+
+            <% } %>
+
+            <hr class="my-5">
+
+            <h3 class="mb-4">All Reviews</h3>
+
+            <div class="row">
+
+                <% if(listing.reviews && listing.reviews.length > 0){ %>
+
+                    <% listing.reviews.forEach(review => { %>
+
+                    <div class="col-md-6 mb-3">
+
+                        <div class="card shadow-sm">
+
+                            <div class="card-body">
+
+                                <h6 class="fw-bold">
+                                    <%= review.author ? review.author.username : "Anonymous" %>
+                                </h6>
+
+                                <p>Rating: <%= review.rating %>/5</p>
+
+                                <p><%= review.comment %></p>
+
+                                <% if(currUser && review.author && String(review.author._id) === String(currUser._id)){ %>
+
+                                <form
+                                    method="POST"
+                                    action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                                >
+                                    <button class="btn btn-danger btn-sm">
+                                        Delete Review
+                                    </button>
+                                </form>
+
+                                <% } %>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <% }) %>
+
+                <% } else { %>
+
+                    <p>No reviews yet.</p>
+
+                <% } %>
+
+            </div>
+
+            <hr class="my-5">
+
+            <div class="card border-0 shadow-lg rounded-4 mb-4">
+                <div class="card-body p-4">
+
+                    <h3 class="fw-bold">
+                        ✨ AI Travel Assistant
+                    </h3>
+
+                    <p class="text-muted">
+                        Generate a personalized trip plan for this destination.
+                    </p>
+
+                    <button
+                        id="planBtn"
+                        class="btn btn-success rounded-pill px-4"
+                    >
+                        Generate Trip Plan
+                    </button>
+
+                    <div id="tripResult" class="mt-4"></div>
+
+                </div>
+            </div>
+
+            <hr class="my-5">
+
+            <h3 class="mb-3">Location Map</h3>
+
+            <div
+                id="map"
+                style="
+                    height:400px;
+                    width:100%;
+                    border-radius:12px;
+                "
+            ></div>
+
+        </div>
+    </div>
+</div>
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+const listingData = <%- JSON.stringify(listing) %>;
+
+if (
+    listingData.geometry &&
+    listingData.geometry.coordinates &&
+    listingData.geometry.coordinates.length === 2
+) {
+    const lng = listingData.geometry.coordinates[0];
+    const lat = listingData.geometry.coordinates[1];
+
+    const map = L.map("map").setView([lat, lng], 13);
+
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap Contributors"
+    }).addTo(map);
+
+    L.marker([lat, lng])
+        .addTo(map)
+        .bindPopup(
+            `<b>${listingData.title}</b><br>${listingData.location}, ${listingData.state}, ${listingData.country}`
+        )
+        .openPopup();
+} else {
+    document.getElementById("map").innerHTML =
+        "<div class='alert alert-warning'>Location not available</div>";
+}
+</script>
+
+<script>
+const planBtn = document.getElementById("planBtn");
+
+if (planBtn) {
+    planBtn.addEventListener("click", async () => {
+
+        const resultBox = document.getElementById("tripResult");
+
+        resultBox.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border text-success"></div>
+                <p class="mt-2">Generating your trip plan...</p>
+            </div>
+        `;
+
+        try {
+            const response = await fetch("/ai-trip-plan", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    location: "<%= listing.location %>",
+                    country: "<%= listing.country %>"
+                }),
+            });
+
+            const data = await response.json();
+
+            resultBox.innerHTML = `
+                <div class="alert alert-success shadow-sm">
+                    <h5>🧳 Your Travel Plan</h5>
+                    <pre style="white-space:pre-wrap;margin:0;font-family:inherit;">
+${data.plan}
+                    </pre>
+                </div>
+            `;
+
+        } catch (err) {
+
+            resultBox.innerHTML = `
+                <div class="alert alert-danger">
+                    Failed to generate trip plan.
+                </div>
+            `;
+        }
+    });
+}
+</script>

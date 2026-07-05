@@ -1,0 +1,259 @@
+<% layout("/layouts/boilerplate") %>
+
+
+<!-- HERO SECTION -->
+
+<section class="hero-section">
+
+    <div class="hero-overlay">
+
+        <div class="hero-content">
+
+            <h1>
+                Discover Beautiful Places Across India 
+            </h1>
+
+            <p>
+                Find amazing destinations, unique stays and unforgettable experiences.
+            </p>
+
+
+            <!-- SEARCH -->
+
+            <form action="/listings" method="GET" class="hero-search">
+
+                <div class="search-box">
+
+
+                    <div class="search-item">
+
+                        <label>
+                            <i class="fa-solid fa-location-dot"></i>
+                            Where
+                        </label>
+
+                        <input
+                        type="text"
+                        name="location"
+                        placeholder="Search destinations">
+
+                    </div>
+
+
+
+                    <div class="divider"></div>
+
+
+
+                    <div class="search-item">
+
+                        <label>
+                            <i class="fa-solid fa-map"></i>
+                            State
+                        </label>
+
+
+                        <select name="state">
+
+                            <option value="">
+                                All States
+                            </option>
+
+
+                            <% states.forEach(state=>{ %>
+
+                                <option value="<%= state %>">
+                                    <%= state %>
+                                </option>
+
+                            <% }) %>
+
+
+                        </select>
+
+
+                    </div>
+
+
+
+                    <div class="divider"></div>
+
+
+
+                    <div class="search-item">
+
+                        <label>
+                            <i class="fa-solid fa-user-group"></i>
+                            Guests
+                        </label>
+
+
+                        <input
+                        type="number"
+                        name="guests"
+                        placeholder="Guests">
+
+                    </div>
+
+
+
+                    <button class="search-btn">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+
+
+<!-- STATES SECTION -->
+
+
+<div class="container mt-5">
+
+
+<h2 class="section-title">
+    Explore Popular States
+</h2>
+
+
+<p class="text-muted mb-4">
+    Discover India's most beautiful destinations
+</p>
+
+
+
+<div class="row">
+
+
+<% states.forEach(state => { %>
+
+
+<div class="col-lg-4 col-md-6 mb-4">
+
+
+<a href="/listings/states/<%= encodeURIComponent(state) %>"
+class="text-decoration-none">
+
+
+<div class="card state-card">
+
+
+<img
+src="<%= stateImages[state] || 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee' %>"
+class="card-img-top">
+
+
+<div class="card-body">
+
+
+<h4>
+<%= state %>
+</h4>
+
+
+<p>
+Explore top 5 famous places
+</p>
+
+
+<button class="explore-btn">
+Explore Now
+</button>
+
+
+</div>
+
+
+</div>
+
+
+</a>
+
+
+</div>
+
+
+<% }) %>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<!-- FEATURES -->
+
+
+<section class="features container">
+
+
+<div class="feature">
+
+<i class="fa-solid fa-house"></i>
+
+<h5>
+Amazing Stays
+</h5>
+
+<p>
+Comfortable places for your journey
+</p>
+
+</div>
+
+
+
+<div class="feature">
+
+<i class="fa-solid fa-location-dot"></i>
+
+<h5>
+Best Destinations
+</h5>
+
+<p>
+Explore famous Indian locations
+</p>
+
+</div>
+
+
+
+<div class="feature">
+
+<i class="fa-solid fa-star"></i>
+
+<h5>
+Great Experiences
+</h5>
+
+<p>
+Create unforgettable memories
+</p>
+
+</div>
+
+
+</section>

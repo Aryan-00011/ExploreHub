@@ -1,0 +1,78 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+  <div class="container">
+
+    <a class="navbar-brand fw-bold fs-4" href="/">
+      <i class="fa-regular fa-compass me-2"></i>ExploreHub
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <!-- Left Side -->
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">
+            <i class="fa-solid fa-house me-1"></i> Home
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/listings">
+            <i class="fa-solid fa-list me-1"></i> All Listings
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/listings/new">
+            <i class="fa-solid fa-plus me-1"></i> Add Listing
+          </a>
+        </li>
+      </ul>
+
+      <!-- Right Side -->
+      <ul class="navbar-nav">
+
+        <% if(!currUser){ %>
+
+          <li class="nav-item me-2">
+            <a class="btn btn-outline-light" href="/login">
+              Login
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="btn btn-danger" href="/signup">
+              Sign Up
+            </a>
+          </li>
+
+        <% } else { %>
+
+          <li class="nav-item">
+  <a class="nav-link text-light me-3" href="#">
+    <i class="fa-solid fa-user me-1"></i>
+    Explorer <%= currUser.username %>
+  </a>
+</li>
+
+          <li class="nav-item">
+            <a class="btn btn-danger" href="/logout">
+              Logout
+            </a>
+          </li>
+
+        <% } %>
+
+      </ul>
+
+    </div>
+  </div>
+</nav>

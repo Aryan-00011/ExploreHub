@@ -1,0 +1,44 @@
+<% layout("/layouts/boilerplate") %>
+
+<h1 class="text-center my-4">
+  Explore <%= state %>
+</h1>
+
+<div class="row">
+
+<% places.forEach(place => { %>
+
+  <div class="col-md-4 mb-4">
+
+    <a href="/listings/<%= place._id %>"
+       class="text-decoration-none">
+
+      <div class="card shadow h-100">
+
+        <img
+          src="<%= place.image.url %>"
+          class="card-img-top"
+          style="height:250px; object-fit:cover;"
+        >
+
+        <div class="card-body">
+
+          <h5 class="card-title">
+            <%= place.title %>
+          </h5>
+
+          <p class="card-text text-muted">
+            <%= place.location %>
+          </p>
+
+        </div>
+
+      </div>
+
+    </a>
+
+  </div>
+
+<% }) %>
+
+</div>
