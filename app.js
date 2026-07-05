@@ -17,7 +17,7 @@ const listingRouter = require("./routes/listing");
 const reviewRouter = require("./routes/review");
 const userRouter = require("./routes/user");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/ExploreHub";
+const MONGO_URL = process.env.ATLASDB_URL;
 
 // MongoDB Connection
 async function main() {
@@ -41,7 +41,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Session Config
 const sessionOptions = {
-  secret: "mysupersecretcode",
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -125,6 +125,8 @@ app.use((req, res) => {
 
 
 // Server
-app.listen(8080, () => {
-  console.log("Server is listening on port 8080");
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });
